@@ -1,0 +1,7 @@
+- moss/umbross-like game:
+- arcade game where you have to beat 5-10 levels at record time
+- one standard block class that takes care of all blocks
+- either "handdrawn" graphics or a nice background with black blocks
+- if time is left, add goodies, skillful shortcuts etc. to the game
+
+- verdict: easy, few functionalities, one song (or no songs), only few art files
