@@ -1,7 +1,13 @@
 - moss/umbross-like game:
-- arcade game where you have to beat 5-10 levels at record time
+- arcade game where you have to beat 1-3 levels at record time
 - one standard block class that takes care of all blocks
 - either "handdrawn" graphics or a nice background with black blocks
 - if time is left, add goodies, skillful shortcuts etc. to the game
+- possible themes: black world, toy world, water world, quantum world, blue screen of death world
+- bsodw: blue background, white tiles, flickering shadow on oss
+-> change shadow on CHARacTer looking to the left, so lighting is consistent
+-> flicker only if standing still? / for story at the start?
+- count down instead of up -> more replay incentive because you die
+- how about calling this game "(goddammit) rOSS"?
 
 - verdict: easy, few functionalities, one song (or no songs), only few art files
