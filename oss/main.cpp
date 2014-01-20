@@ -367,14 +367,19 @@ int main(int argc, char** argv){
         Chart c(200, 0, 29, 28);
         //create blocks
         Block bl0(-100, -1, SCREEN_WIDTH+200, 1);
+        Block bl00(0, -100, 10, SCREEN_HEIGHT+200);
         Block bl1(0, 340, 400, 300);
         Block bl2(540, 200, 200, 200);
-        Block bl3(-20, 190, 100, 100);
+        Block bl3(10, 190, 100, 100);
         Block bl4(-100, 200, 200, 200);
         Block bl5(400, 80, 30, 400);
-        Block blocks[] = {bl0, bl1, bl2, bl3};
-        Block blocks2[] = {bl0, bl4, bl5};
-        int no_of_screens = 2;
+        Block bl000(SCREEN_WIDTH, -100, 1, SCREEN_HEIGHT+200);
+        // TODO screen 0
+        Block blocks1[] = {bl0, bl00, bl1, bl2, bl3};
+        Block blocks2[] = {bl0, bl4, bl5};//, bl000};
+        Block blocks3[] = {bl0};
+        int block_nos[] = {0, 5, 3, 1};
+        int no_of_screens = 4;
         //Block meta_blocks[][] = {blocks, blocks2}; // sigh. stupid c++. i hate you.
 
         //used to temporarily store events into
@@ -383,7 +388,7 @@ int main(int argc, char** argv){
         bool quit = false;
         int i = 0;
         int jump = 1;
-        int curr_screen = 0; // -1 = start screen on top? TODO
+        int curr_screen = 1; // 0 = start screen on top? TODO
         int on_a_block = -1;
         int on_a_wall = -1;
         int on_a_wall_side = 0;
@@ -616,10 +621,12 @@ int main(int argc, char** argv){
             
             //TODO it currently only works if blocks align from screen to screen
             // also collision-detect left and right so you can fall into other screen
-            if (curr_screen == 0) f = blocks;
-            if (curr_screen == 1) f = blocks2;
+            if (curr_screen == 1) f = blocks1;
+            if (curr_screen == 2) f = blocks2;
+            if (curr_screen == 3) f = blocks3;
             
-            for (int j=0; j<sizeof(f); j++)
+            //TODO sizeof f is ALWAYS 4.
+            for (int j=0; j<block_nos[curr_screen]; j++)
             {
                 Block bl = f[j];
                 /*std::cout << c.y << std::endl;
@@ -738,6 +745,7 @@ int main(int argc, char** argv){
                     else
                     {
                         c.x += 1;
+                        c.y -= 1;
                         std::cout << "wuff fall" << std::endl; 
                     }
                 
@@ -798,7 +806,8 @@ int main(int argc, char** argv){
             // TODO disable vollbild / stretching the window in any way!
             if (c.x > SCREEN_WIDTH)
             {
-                if ((curr_screen >= 0) and (curr_screen < no_of_screens-1) and (c.vx > 0))
+                if ((curr_screen > 0) and (curr_screen < no_of_screens-1) and (c.vx > 0))
+                {
                     curr_screen += 1;
                     c.x = 0;
                     c.y -= 1; // so it collision detects
@@ -807,11 +816,15 @@ int main(int argc, char** argv){
                     on_a_wall = -1;
                     on_a_wall_side = -1;
                     std::cout << "scrollin'" << std::endl;
+                }
             }
             else if ((c.x+c.w < 0) and (c.vx < 0))
             {
-                if ((curr_screen > 0))
+                if (curr_screen > 1)
+                {
+                    std::cout << curr_screen << std::endl;
                     curr_screen -= 1;
+                    std::cout << curr_screen << std::endl;
                     c.x = SCREEN_WIDTH-c.w;
                     c.y -= 1; // so it collision detects
                     jump = 2;
@@ -819,6 +832,7 @@ int main(int argc, char** argv){
                     on_a_wall = -1;
                     on_a_wall_side = -1;
                     std::cout << "nooooo" << std::endl;
+                }
             }
             
             
@@ -839,10 +853,10 @@ int main(int argc, char** argv){
             
             //Block *bl = nullptr;
             Block *blo;
-            if (curr_screen == 0) blo = blocks;
-            if (curr_screen == 1) blo = blocks2;
-            //std::cout << sizeof(*blo) << std::endl;
-            for (int j=0; j<sizeof(blo); j++)
+            if (curr_screen == 1) blo = blocks1;
+            if (curr_screen == 2) blo = blocks2;
+            if (curr_screen == 3) blo = blocks3;
+            for (int j=0; j<block_nos[curr_screen]; j++)
             {
                 Block blop = blo[j];
                 renderTexture(white_block, renderer, blop.x, blop.y, blop.w, blop.h);
