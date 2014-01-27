@@ -5,8 +5,8 @@
 #include <SDL2/SDL_image.h> // load sdl2 image library
 //#include "chart.h" // i have no idea how to include files. do i have to change the makefile?
 
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 1280;//640;
+const int SCREEN_HEIGHT = 720;//480;
 
 
 
@@ -338,7 +338,7 @@ int main(int argc, char** argv){
         if (SDL_Init(SDL_INIT_EVERYTHING) != 0){logSDLError(std::cout, "SDL_Init");return 1;}
 
         //Setup our window and renderer
-        SDL_Window *window = SDL_CreateWindow("Oss", 100, 100, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+        SDL_Window *window = SDL_CreateWindow("Oss", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
         if (window == nullptr){logSDLError(std::cout, "CreateWindow");return 2;}
         SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
         if (renderer == nullptr){logSDLError(std::cout, "CreateRenderer");return 3;}
@@ -346,13 +346,17 @@ int main(int argc, char** argv){
         //The textures we'll be using
         SDL_Texture *background = loadTexture("sprites/background.png", renderer);
         SDL_Texture *background_small = loadTexture("sprites/background_charsized.png", renderer);
-        SDL_Texture *cr = loadTexture("sprites/char_right.png", renderer);
-        SDL_Texture *cl = loadTexture("sprites/char_left.png", renderer);
+        SDL_Texture *planet_bg = loadTexture("sprites/planet_bg_blurry.png", renderer);
+        //SDL_Texture *cr = loadTexture("sprites/char_right.png", renderer);
+        //SDL_Texture *cl = loadTexture("sprites/char_left.png", renderer);
+        SDL_Texture *cr = loadTexture("sprites/char_right_small.png", renderer);
+        SDL_Texture *cl = loadTexture("sprites/char_left_small.png", renderer);
+        SDL_Texture *c_shadow = loadTexture("sprites/char_right_small_mask.png", renderer);
         SDL_Texture *white_block = loadTexture("sprites/white_block.png", renderer);
         SDL_Texture *cimg = cr; // start of facing the right side
         
         //Make sure they both loaded ok
-        if (background == nullptr || cr == nullptr || white_block == nullptr ||
+        if (background == nullptr || cr == nullptr || white_block == nullptr || c_shadow == nullptr ||
             cl == nullptr || background_small == nullptr)return 4;
 
         //Clear the window
@@ -364,21 +368,27 @@ int main(int argc, char** argv){
 
 
         //create character
-        Chart c(200, 0, 29, 28);
+        int chart_width = 14;
+        int chart_height = 14;
+        Chart c(1000, 0, chart_width, chart_height);
         //create blocks
+        Block bl_left_bnd(-1, -100, 1, SCREEN_HEIGHT+200);
+        Block bl_right_bnd(SCREEN_WIDTH, -100, 1, SCREEN_HEIGHT+200);
+        Block bl_start1(-10, SCREEN_HEIGHT-60, 240, 60);
+        Block bl_start2(300, SCREEN_HEIGHT-60, SCREEN_WIDTH-300+10, 60);
         Block bl0(-100, -1, SCREEN_WIDTH+200, 1);
-        Block bl00(0, -100, 10, SCREEN_HEIGHT+200);
-        Block bl1(0, 340, 400, 300);
-        Block bl2(540, 200, 200, 200);
-        Block bl3(10, 190, 100, 100);
+        Block bl00(0, -100, 100, SCREEN_HEIGHT+200);
+        Block bl1(0, 540, 700, 600);
+        Block bl2(920, 200, 200, 200);
+        Block bl3(1200, 200, 80, 100); 
         Block bl4(-100, 200, 200, 200);
         Block bl5(400, 80, 30, 400);
         Block bl000(SCREEN_WIDTH, -100, 1, SCREEN_HEIGHT+200);
-        // TODO screen 0
+        Block blocks0[] = {bl0, bl_left_bnd, bl_right_bnd, bl_start1, bl_start2};
         Block blocks1[] = {bl0, bl00, bl1, bl2, bl3};
         Block blocks2[] = {bl0, bl4, bl5};//, bl000};
         Block blocks3[] = {bl0};
-        int block_nos[] = {0, 5, 3, 1};
+        int block_nos[] = {5, 5, 3, 1};
         int no_of_screens = 4;
         //Block meta_blocks[][] = {blocks, blocks2}; // sigh. stupid c++. i hate you.
 
@@ -388,7 +398,7 @@ int main(int argc, char** argv){
         bool quit = false;
         int i = 0;
         int jump = 1;
-        int curr_screen = 1; // 0 = start screen on top? TODO
+        int curr_screen = 0; // 0 = start screen on top? TODO
         int on_a_block = -1;
         int on_a_wall = -1;
         int on_a_wall_side = 0;
@@ -450,8 +460,8 @@ int main(int argc, char** argv){
                                 //this could be any fun
                                 break;
                             case SDLK_r:
-                                //TODO re-load screen 1; reset timer etc.
-                                c.x = 20;
+                                //TODO  reset timer etc.
+                                c.x = 1000;
                                 c.y = 0;
                                 c.vx = 0;
                                 c.vy = 0;
@@ -461,6 +471,7 @@ int main(int argc, char** argv){
                                 on_a_block = -1;
                                 on_a_wall = -1;
                                 on_a_wall_side = 0;
+                                curr_screen = 0;
                                 break;
                             case SDLK_x:
                                 quit = true;
@@ -520,9 +531,14 @@ int main(int argc, char** argv){
             //ADJUST CHART (=CHARACTER) VARIABLES
             
             //x-axis
+            
+                // TODO while hitting block from below and having hold left and right and then
+                //   releasing left you don't go right (after wall jump)
+                
+                
             if (on_a_wall == -1)
             {
-                dx = 0.9;
+                dx = 0.8;
                 if (left_held == true)
                 {
                     //TODO you can't change direction that fast
@@ -530,16 +546,18 @@ int main(int argc, char** argv){
                     dx = 1;
                     cimg = cl;
                     //c.vx = -c.vxmax;
-                    if (c.vx >= -c.vxmax)
+                    if (c.vx > -c.vxmax)
                         c.vx -= c.ac;
+                    else c.vx = -c.vxmax;
                 }
                 else if (right_held == true)
                 {
                     dx = 1;
                     cimg = cr;
                     //c.vx = c.vxmax;
-                    if (c.vx <= c.vxmax)
+                    if (c.vx < c.vxmax)
                         c.vx += c.ac;
+                    else c.vx = c.vxmax;
                 }
                 c.vx = dx*c.vx;
                 c.x += c.vx;
@@ -621,6 +639,7 @@ int main(int argc, char** argv){
             
             //TODO it currently only works if blocks align from screen to screen
             // also collision-detect left and right so you can fall into other screen
+            if (curr_screen == 0) f = blocks0;
             if (curr_screen == 1) f = blocks1;
             if (curr_screen == 2) f = blocks2;
             if (curr_screen == 3) f = blocks3;
@@ -659,7 +678,7 @@ int main(int argc, char** argv){
                     // if not_left and not_right of block
                     if ((c.x+fuckslide*c.w > bl.x) and (c.x+(1-fuckslide)*c.w < bl.x+bl.w))
                     {
-                        c.y = bl.y+bl.h;
+                        c.y = bl.y+bl.h+1;
                         std::cout << "bonk" << std::endl; 
                     }   
                 } 
@@ -693,18 +712,19 @@ int main(int argc, char** argv){
                     jump = 2;
                     on_a_wall = -1;
                     on_a_wall_side = -1;
-                    left_held = false; // needed so that it doesn't move
+                    //left_held = false; // needed so that it doesn't move
                         // left eternally (see c.vx = -c.vxmax;)
                     if (up_held == true)
                     {
                         c.x -= 1;
                         c.vx = -c.vxmax;
-                        c.vy = -c.vymax;
+                        c.vy = -3.0/4.0*c.vymax;
                         std::cout << "wuff jump" << std::endl; 
                     }
                     else
                     {
                         c.x -= 1;
+                        c.y -= 1;
                         std::cout << "wuff fall" << std::endl; 
                     }
                 
@@ -739,7 +759,7 @@ int main(int argc, char** argv){
                     {
                         c.x += 1;
                         c.vx = c.vxmax;
-                        c.vy = -c.vymax;
+                        c.vy = -3.0/4.0*c.vymax;
                         std::cout << "wuff jump" << std::endl; 
                     }
                     else
@@ -783,19 +803,32 @@ int main(int argc, char** argv){
             // top of screen is handled by extra block!
             if (c.y > SCREEN_HEIGHT)
             {
-                c.x = 20;
-                c.y = 0;
-                c.xold = 20;
-                c.yold = 0;
-                jump = 2;
-                c.vx = 0;
-                c.vy = 0;
-                on_a_block = -1;
-                on_a_wall = -1;
-                on_a_wall_side = -1;
+                if (curr_screen != 0)
+                {
+                    c.x = 60;
+                    c.y = 0;
+                    c.xold = 60;
+                    c.yold = 0;
+                    jump = 2;
+                    c.vx = 0;
+                    c.vy = 0;
+                    on_a_block = -1;
+                    on_a_wall = -1;
+                    on_a_wall_side = -1;
+                }
+                if (curr_screen == 1) // single exception to rule
+                {
+                    c.x = 120;
+                    c.xold = 120;
+                }
+                if (curr_screen == 0)
+                {
+                    curr_screen = 1;
+                    c.y -= SCREEN_HEIGHT;
+                    c.yold -= SCREEN_HEIGHT;
+                }
+                
             }
-            
-            
             
             
             
@@ -849,10 +882,20 @@ int main(int argc, char** argv){
             //don't redraw entire background, just bit where char just was
             //doesn't work
             //renderTexture(background_small, renderer, c.xold, c.yold, c.w, c.h);
-            renderTexture(background, renderer, 0, 0);
             
             //Block *bl = nullptr;
             Block *blo;
+            if (curr_screen == 0)
+            {
+                blo = blocks0;//{};
+                renderTexture(planet_bg, renderer, 0, 0);
+                renderTexture(c_shadow, renderer, c.x-3, c.y-3);
+            }
+            else
+            {
+                renderTexture(background, renderer, 0, 0);
+                renderTexture(c_shadow, renderer, c.x-3, c.y-3);
+            }
             if (curr_screen == 1) blo = blocks1;
             if (curr_screen == 2) blo = blocks2;
             if (curr_screen == 3) blo = blocks3;
@@ -863,7 +906,7 @@ int main(int argc, char** argv){
             }
             renderTexture(cimg, renderer, c.x, c.y);
             SDL_RenderPresent(renderer);
-            SDL_Delay(20); //20 in debug, 10~15 in game
+            SDL_Delay(10); //20 in debug, 10~15 in game
             //TODO add timer, so that it isnt =20ms+executiondelay, but =20ms
             
             i += 1;
@@ -880,8 +923,10 @@ int main(int argc, char** argv){
         //Destroy the various items
         SDL_DestroyTexture(background);
         SDL_DestroyTexture(background_small);
+        SDL_DestroyTexture(planet_bg);
         SDL_DestroyTexture(cr);
         SDL_DestroyTexture(cl);
+        SDL_DestroyTexture(c_shadow);
         SDL_DestroyTexture(white_block);
         //TODO update destroyer
         SDL_DestroyRenderer(renderer);
