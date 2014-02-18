@@ -15,9 +15,10 @@ EXE = run
 all: $(EXE)
 
 $(EXE): main.o
-	$(CXX) $< $(LDFLAGS) -o $@
+	$(CXX) chart.cpp $< $(LDFLAGS) -o $@
 
 main.o: main.cpp
+	$(CXX) $(CXXFLAGS) chart.cpp -o chart.o
 	$(CXX) $(CXXFLAGS) $< -o $@
 	
 

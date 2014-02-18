@@ -14,11 +14,18 @@ EXE = run
 
 all: $(EXE)
 
+
+	
 $(EXE): main.o
-	$(CXX) $< $(LDFLAGS) -o $@
+	$(CXX) block.cpp chart.cpp $< $(LDFLAGS) -o $@
+	#sdl_funcs.cpp
 
 main.o: main.cpp
+	#$(CXX) $(CXXFLAGS) sdl_funcs.cpp -o sdl_funcs.o
+	$(CXX) $(CXXFLAGS) block.cpp -o block.o
+	$(CXX) $(CXXFLAGS) chart.cpp -o chart.o
 	$(CXX) $(CXXFLAGS) $< -o $@
+	
 	
 
 

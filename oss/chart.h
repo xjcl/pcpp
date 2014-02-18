@@ -3,15 +3,17 @@
 
 class Chart
 {
-  int x, y, w, h;
 
-public:
-  Chart(int x, int y, int w, int h); // do i really have to name the variables now already?
-  void set_values (int a, int b, int c, int d); // same here.
-  int update ();
+    public:
+        double x, xold, y, yold, w, h, vx, vxmax, vy, vymax, ac, in_air;
+        Chart(int, int, int, int);
+        //int get_x (); etc.
+        int update ();
   
 };
 
 
 
 #endif
+
+

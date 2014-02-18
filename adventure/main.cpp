@@ -3,12 +3,13 @@
 #include <iostream> // load basic input/output
 #include <SDL2/SDL.h> // load simple directmedia layer 2
 #include <SDL2/SDL_image.h> // load sdl2 image library
+#include "chart.h"
 
-int swidth = 256; // for calculations
-int sheight = 224;
+int swidth = 304; // for calculations
+int sheight = 176;
 
-const int SCREEN_WIDTH = 256*3;  //16*16 //256 // 768
-const int SCREEN_HEIGHT = 224*3; //16*14 //224 // 672 (1 more col.: 720)
+const int SCREEN_WIDTH = 304*4;  //16*16+16*3 //304 // 1216
+const int SCREEN_HEIGHT = 176*4; //16*11      //176 //  704 (1 more row: 768)
 
 int scr_dispos = 16*3; //screen disposition. describes space
                                  // reserved by item/menu screen bit
@@ -115,90 +116,6 @@ void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class Chart
-{
-    public:
-        double x, xold, y, yold, w, h, vx, vy;
-        Chart(int, int, int, int);
-        //void set_values (int, int);
-        //int get_x (); etc.
-        int update ();
-};
-
-
-Chart::Chart(int a, int b, int c, int d)
-{
-    x = a;
-    xold = a;
-    y = b;
-    yold = b;
-    w = c;
-    h = d;
-    /*vx = 3;
-    vy = 3;*/
-    //DEBUG
-    vx = 12;
-    vy = 12;
-}
-
-int Chart::update () {
-    return 0;
-}
 
 
 
@@ -321,29 +238,6 @@ int Block::update () {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 int main(int argc, char** argv){
         //Start up SDL and make sure it went ok
         if (SDL_Init(SDL_INIT_EVERYTHING) != 0){logSDLError(std::cout, "SDL_Init");return 1;}
@@ -353,14 +247,15 @@ int main(int argc, char** argv){
         if (window == nullptr){logSDLError(std::cout, "CreateWindow");return 2;}
         SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
         if (renderer == nullptr){logSDLError(std::cout, "CreateRenderer");return 3;}
-        SDL_RenderSetLogicalSize(renderer, 16*16, 16*14);
+        
+        SDL_RenderSetLogicalSize(renderer, 16*19, 16*11);
 
         //The textures we'll be using
         //SDL_Texture *background = loadTexture("sprites/background.png", renderer);
-        SDL_Texture *cr = loadTexture("sprites/char_right.png", renderer);
-        SDL_Texture *cl = loadTexture("sprites/char_left.png", renderer);
-        SDL_Texture *cu = loadTexture("sprites/char_up.png", renderer);
-        SDL_Texture *cd = loadTexture("sprites/char_down.png", renderer);
+        SDL_Texture *cr = loadTexture("sprites/char_right1.png", renderer);
+        SDL_Texture *cl = loadTexture("sprites/char_left1.png", renderer);
+        SDL_Texture *cu = loadTexture("sprites/char_up1.png", renderer);
+        SDL_Texture *cd = loadTexture("sprites/char_down1.png", renderer);
         
         //interactive
         SDL_Texture *trock = loadTexture("sprites/rock2.png", renderer); //placeholder file atm
@@ -395,7 +290,7 @@ int main(int argc, char** argv){
 
         //create character
         //Chart c(100, 0, 16, 16); // extreme slowdown for utterly arbitrary reason (100%16!=0?)
-        Chart c(16, 16*5, 16, 16);
+        Chart c(16, 16*5, 12, 16);
         //create blocks
         
         
@@ -1103,22 +998,22 @@ int main(int argc, char** argv){
             SDL_RenderClear(renderer);
             
             // scrolling
-            if (c.x > swidth)
+            if (c.x > swidth - c.w)
             {
                 curr_screen += 1; 
-                c.x = 0;                            
+                c.x = scr_dispos;                            
             }
-            else if (c.x < - c.w)
+            else if (c.x < scr_dispos)
             {
                 curr_screen -= 1;  
                 c.x = swidth - c.w;
             }
-            else if (c.y > sheight)
+            else if (c.y > sheight - c.h)
             {
                 curr_screen += 100; 
-                c.y = scr_dispos;                            
+                c.y = 0;                            
             }
-            else if (c.y < scr_dispos - c.h)
+            else if (c.y < 0)
             {
                 curr_screen -= 100;  
                 c.y = sheight - c.h;
@@ -1363,8 +1258,8 @@ int main(int argc, char** argv){
                     
                     if ((lint == 10) or (lint == 77))
                     {
-                        int lx = 16*l;
-                        int ly = scr_dispos+16*j;
+                        int lx = scr_dispos+16*l;
+                        int ly = +16*j;
                         int lw = 16;
                         int lh = 16;
                         
@@ -1594,28 +1489,28 @@ int main(int argc, char** argv){
                     else if (curr_screen == 4444) lint = a4444[j][l];
                     
                     if (lint == 0)
-                        renderTexture(tground, renderer, 16*l, scr_dispos+16*j, 16, 16);
+                        renderTexture(tground, renderer, scr_dispos+16*l, 16*j, 16, 16);
                     else if (lint == 1)
-                        renderTexture(tmt, renderer, 16*l, scr_dispos+16*j, 16, 16);
+                        renderTexture(tmt, renderer, scr_dispos+16*l, 16*j, 16, 16);
                     else if (lint == 2)
-                        renderTexture(tbeach, renderer, 16*l, scr_dispos+16*j, 16, 16);
+                        renderTexture(tbeach, renderer, scr_dispos+16*l, 16*j, 16, 16);
                     else if (lint == 3)
-                        renderTexture(tfor, renderer, 16*l, scr_dispos+16*j, 16, 16);
+                        renderTexture(tfor, renderer, scr_dispos+16*l, 16*j, 16, 16);
                     else if (lint == 4)
-                        renderTexture(tice, renderer, 16*l, scr_dispos+16*j, 16, 16);
+                        renderTexture(tice, renderer, scr_dispos+16*l, 16*j, 16, 16);
                     else if (lint == 5)
-                        renderTexture(ttun, renderer, 16*l, scr_dispos+16*j, 16, 16);
+                        renderTexture(ttun, renderer, scr_dispos+16*l, 16*j, 16, 16);
                     else if (lint == 6)
-                        renderTexture(tswamp, renderer, 16*l, scr_dispos+16*j, 16, 16);
+                        renderTexture(tswamp, renderer, scr_dispos+16*l, 16*j, 16, 16);
                     else if (lint == 7)
-                        renderTexture(ttown, renderer, 16*l, scr_dispos+16*j, 16, 16);
+                        renderTexture(ttown, renderer, scr_dispos+16*l, 16*j, 16, 16);
                         
                     else if (lint == 10)
-                        renderTexture(trock, renderer, 16*l, scr_dispos+16*j, 16, 16);
+                        renderTexture(trock, renderer, scr_dispos+16*l, 16*j, 16, 16);
                     else if (lint == 77)
-                        renderTexture(twater, renderer, 16*l, scr_dispos+16*j, 16, 16);
+                        renderTexture(twater, renderer, scr_dispos+16*l, 16*j, 16, 16);
                     else if (lint == 88)
-                        renderTexture(tmanhole, renderer, 16*l, scr_dispos+16*j, 16, 16);
+                        renderTexture(tmanhole, renderer, scr_dispos+16*l, 16*j, 16, 16);
                 }
             }
             renderTexture(cimg, renderer, c.x, c.y);

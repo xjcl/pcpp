@@ -3,7 +3,9 @@
 #include <iostream> // load basic input/output
 #include <SDL2/SDL.h> // load simple directmedia layer 2
 #include <SDL2/SDL_image.h> // load sdl2 image library
-//#include "chart.h" // i have no idea how to include files. do i have to change the makefile?
+#include "chart.h" // doesn't work because CPP IS SHIT *cries
+#include "block.h" // I bet the time wasted on includes is not worth it and I'm gonna die unhappy
+//#includes "sdl_funcs.h" // ECH
 
 const int SCREEN_WIDTH = 1280;//640;
 const int SCREEN_HEIGHT = 720;//480;
@@ -153,186 +155,6 @@ void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-class Chart
-{
-    public:
-        double x, xold, y, yold, w, h, vx, vxmax, vy, vymax, ac, in_air;
-        Chart(int, int, int, int);
-        //void set_values (int, int);
-        //int get_x (); etc.
-        int update ();
-};
-
-
-Chart::Chart(int a, int b, int c, int d)
-{
-    x = a;
-    xold = a;
-    y = b;
-    yold = b;
-    w = c;
-    h = d;
-    vx = 0;
-    vxmax = 6;
-    vy = 0;
-    vymax = 18;
-    ac = 1;
-    //in_air is covered by the jump variable
-    //of the main loop at the moment
-    in_air = 0;
-}
-
-int Chart::update () {
-    return 0;
-}
-
-
-
-
-
-
-
-
-
-
-class Block
-{
-    public:
-        double x, y, w, h;
-        Block(int, int, int, int);
-        //void set_values (int, int);
-        //int get_x (); etc.
-        int update ();
-};
-
-
-Block::Block(int a, int b, int c, int d)
-{
-    x = a;
-    y = b;
-    w = c;
-    h = d;
-}
-
-int Block::update () {
-    return 0;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 int main(int argc, char** argv){
         //Start up SDL and make sure it went ok
         if (SDL_Init(SDL_INIT_EVERYTHING) != 0){logSDLError(std::cout, "SDL_Init");return 1;}
@@ -371,6 +193,10 @@ int main(int argc, char** argv){
         int chart_width = 14;
         int chart_height = 14;
         Chart c(1000, 0, chart_width, chart_height);
+        //also possible:
+        //Chart c = Chart(1000, 0, chart_width, chart_height);
+        //Chart* c = new Chart(1000, 0, chart_width, chart_height);
+        
         //create blocks
         Block bl_left_bnd(-1, -100, 1, SCREEN_HEIGHT+200);
         Block bl_right_bnd(SCREEN_WIDTH, -100, 1, SCREEN_HEIGHT+200);

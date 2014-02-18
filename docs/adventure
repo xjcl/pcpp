@@ -2,6 +2,7 @@
 
 - basically a TLOZ-like game
 - time period: middle ages
+- title ideas: THE QUEST OF SPIARMF; THE QUEST THAT LASTED 5EVER (because 5 climates getitgetit)
 - you should be able to save at ANY point and continue at any time (write all relevant info in a file)
 - time paradox: travel back in time to kill baddie
 - at the end of a dungeon you would get a "power X", using the power from the future! (but it sounds nice right)
@@ -16,6 +17,10 @@
   -> waterdar: bar that fills the closer you get to a (hidden?) body of water
   -> paths can open up in the ocean/you get an ability to float over water at some point
       or to part it - but there are different kinds of water (mountain, pest/sewer, lava?)
+  -> forest/city cave: messiah ability to remove collisions with water -> cross over to ice world
+  -> better: local water drain that works on 4x4, excludin rims
+  -> prior to that: one-time ability to build a bridge (either to dungeon or other area)?
+  -> skills[n] = {false, false, false, false}; if skills[0] {sth.}
 i alternatively, the theme could be an uninhabited village (too much apocalypse?) or toys.
   -> it would be fun to see a lowres game be colourful and jovial and shit
   -> one can bring in some uninhabited houses to search regardless
@@ -23,6 +28,35 @@ i alternatively, the theme could be an uninhabited village (too much apocalypse?
 i the events in the game could mirror historical events/disasters: great fire of london
   choice system: e.g. beach vs. mountain cave entry to dungeon, with small differences
 i lots of climates in small hub world -> animalcrossing-like
+
+
+ACTUALLY:
+- now that programming and mapping has started it looks like it's more of a closed- than an open-world adventure
+  -> maybe we can change that by having both forest/city and beach area open at the same time
+- dialogue will be the whole screen in black upon entering a new screen and dependent upon skills[n]
+  -> should cover the whole screen with a tiny font and be in a separate loop. stopped by any button.
+  -> should be realistic (i can dream!) and have some meaning, but mostly serve as guide and help
+  (little girl at central lake) "..." - "SOMETHING UP?" - "NOTHING. I JUST WANTED TO REST AT THIS LAKE" - "OH WELL THEN. GO ON." - "HEY, WHAT ARE YOU SITTING ON?" - "IT'S A BIG WHITISH THING MY DAD FISHED OUT OF THE RIVER. MOM THINKS IT COMES FROM SOMETHING ALIVE, BUT THERE IS NOTHING THIS BIG AROUND HERE..."
+  -> more realistic: occasional slipups that reveal you are from the future and useless NPCs
+  -> ok... what? this will never be possible. better keep it funny (middle ages: "THAT SEEMS LIKE A PEST" - "WHAT'S A PEST?"; renaissance: "THIS GINORMOUS THING ON THE BOTTOM OF THE LAKE LOOKED AN AWFUL LOT LIKE A VERTEBRA. BUT THERE ARE NO ANIMALS THIS BIG AROUND. I CONCLUDE, THIS IS GOD'S BONE!")
+  -> don't keep a fascist gouvernment in if you don't have to fight it!
+  -> ALSO: find a good motivation for such a perilous journey or text below:
+  -> OK HERE IS A GOOD ONE: no one will want to know about you and what you are doing. sadly, this is kind of implemented in tloz already. but i mean that in here, you will have NO allies at all. in the later/return dialogoues, you will question if you should at all continue / be cynic about everything you say
+  -> i should be in one room "you find yourself in a small city, beach is to the east bla bla" - "your writing is bad" - "fuck you... you're right i suck... *silently weeps*"
+  -> mountain region pretty railroaded, but then beach-city-forest area open?
+  -> maybe since dragons: comment on china? i.e. some are super patriotic, others are cynic, but you literally have "no time" to tackle this greater problem (sth. horrible happens in end-scene?)
+- status bar with hearts, mini-map (better than zelda) and two slots: mouse and "5" (numpad)
+  -> "5" is action command (sword or sth. else lateron)
+  -> also need to reprogram WASD as move
+
+
+TODO:
+- explain where sword comes from
+- have story of time travel that justifies 30 min time limit
+- then implement a secret way to skip a part
+
+
+
 
 - verdict: very hard: multiple dungeons, weapons, songs, enemies, tons of sprites etc.
 duwolltestesso!
